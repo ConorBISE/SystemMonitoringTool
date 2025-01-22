@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "systemmonitoringtool"
+version = "0.1.0"
+description = ""
+authors = ["ConorBobbleHat <conorb@firstpartners.net>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pydantic = "^2.10.5"
+mypy = "^1.14.1"
+colorlog = "^6.9.0"
+psutil = "^6.1.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
