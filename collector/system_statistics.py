@@ -1,5 +1,4 @@
 import psutil # type: ignore
-import os
 
 def battery_percentage() -> int | None:
     battery = psutil.sensors_battery()

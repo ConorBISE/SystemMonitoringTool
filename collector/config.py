@@ -3,6 +3,7 @@ import colorlog
 
 import sys
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +17,7 @@ def load_config() -> Config:
 
     if CONFIG is None:        
         logger.debug("Config not loaded; loading from file.")
-        with open("config.json") as f:
+        with open(os.path.join(os.path.dirname(__file__), "config.json")) as f:
             CONFIG = Config.model_validate_json(f.read())
         
     return CONFIG
