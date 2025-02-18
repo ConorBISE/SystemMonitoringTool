@@ -11,15 +11,23 @@ python = "^3.11"
 pydantic = "^2.10.5"
 mypy = "^1.14.1"
 colorlog = "^6.9.0"
+dataclasses-json = "^0.6.7"
+requests = "^2.32.3"
 
 [tool.poetry.group.collector.dependencies]
 psutil = "^6.1.1"
+websockets = "^14.2"
 
 [tool.poetry.group.server.dependencies]
 flask = "^3.1.0"
 flask-sock = "^0.7.0"
 flask-sqlalchemy = "^3.1.1"
+django = "^5.1.5"
 
+
+
+[tool.poetry.group.dev.dependencies]
+types-requests = "^2.32.0.20241016"
 
 [build-system]
 requires = ["poetry-core"]
