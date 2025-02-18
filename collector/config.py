@@ -26,4 +26,4 @@ def setup_logging(level: int = logging.DEBUG):
     # TODO - config in file?
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(colorlog.ColoredFormatter("%(log_color)s[%(asctime)s] %(levelname)s:%(name)s:%(message)s"))
-    logging.basicConfig(level=level, handlers=[logging.FileHandler("log/out.log"), handler])
+    logging.basicConfig(level=level, handlers=[logging.FileHandler("log/collector.log"), handler])
