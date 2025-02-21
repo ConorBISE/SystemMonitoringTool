@@ -2,8 +2,7 @@ import aiohttp
 from urllib.parse import urlencode
 from datetime import timedelta, datetime
 
-from typing import Dict, Iterable, List
-import asyncio
+from typing import Dict, Iterable
 
 from collector.data_source.data_source import MetricsGatherer
 from common.data_model import Metric, MetricReading

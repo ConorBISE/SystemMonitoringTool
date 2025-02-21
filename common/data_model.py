@@ -1,31 +1,27 @@
 from dataclasses import dataclass
-from dataclasses_json import dataclass_json
+from dataclasses_json import DataClassJsonMixin
 
 from uuid import UUID, uuid4
 from typing import List
 
-@dataclass_json
 @dataclass
-class Metric:
+class Metric(DataClassJsonMixin):
     name: str
     unit: str
 
-@dataclass_json
 @dataclass
-class MetricReading:
+class MetricReading(DataClassJsonMixin):
     metric: Metric
     value: float
     timestamp: int
 
-@dataclass_json
 @dataclass
-class Device:
+class Device(DataClassJsonMixin):
     name: str
     uuid: UUID
     
-@dataclass_json
 @dataclass
-class Snapshot:
+class Snapshot(DataClassJsonMixin):
     device: Device
     readings: List[MetricReading]
     
