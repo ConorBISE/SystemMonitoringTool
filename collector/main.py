@@ -14,13 +14,10 @@ config.setup_logging()
 
 cfg = config.load_config()
 
-async def iss_data_gathering_task(queue: asyncio.Queue[int]):
-    while True:
-        await queue.put(42)
-        await asyncio.sleep(1)
-
 async def main():
     queue: asyncio.Queue[MetricReading] = asyncio.Queue()
+    
+    guid = uuid4()
     
     async with asyncio.TaskGroup() as tg:
         tg.create_task(SystemStatisticsGatherer(queue).run())
@@ -29,14 +26,17 @@ async def main():
         async with aiohttp.ClientSession() as client_session:
             while True:
                 num_metric_readings = queue.qsize()
-                readings = [await queue.get() for _ in range(num_metric_readings)]
 
-                snapshot = Snapshot(
-                    Device("Paige", uuid4()),
-                    readings
-                )
-                
-                await client_session.post("https://webhook.site/f9d83964-9c1a-4e7d-8c32-542ba3d79814", data=snapshot.to_json(), headers={"Content-Type": "application/json"})
+                if num_metric_readings > 0:
+                    readings = [await queue.get() for _ in range(num_metric_readings)]
+
+                    snapshot = Snapshot(
+                        Device("Paige", guid),
+                        readings
+                    )
+                    
+                    await client_session.post("https://webhook.site/9799e737-9c0c-4a0b-b9fd-21d5b769e965", data=snapshot.to_json(), headers={"Content-Type": "application/json"})
+
                 await asyncio.sleep(10)
 
 if __name__ == "__main__":

@@ -91,12 +91,3 @@ class ISSStatisticsGatherer(MetricsGatherer):
             await self.queue.put(
                 MetricReading(self.METRICS_MAP[group], value, timestamp)
             )
-
-
-async def main():
-    d = ISSDataStream(["TIME_000001"])
-    async for group, timestamp, value in d.run():
-        print (group, timestamp, value)
-
-if __name__ == "__main__":
-    asyncio.run(main())
