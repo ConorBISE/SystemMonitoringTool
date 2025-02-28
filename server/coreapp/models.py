@@ -2,6 +2,7 @@ from django.db import models
 
 class Device(models.Model):
     name = models.TextField()
+    uuid = models.UUIDField(unique=True)
     
 class Metric(models.Model):
     name = models.TextField()
