@@ -1,4 +1,4 @@
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import aiohttp
 from common.api_definitions import Device, MetricReading, Snapshot
@@ -17,7 +17,7 @@ cfg = config.load_config()
 
 async def main():
     queue: asyncio.Queue[MetricReading] = asyncio.Queue()
-    guid = uuid4()
+    guid = UUID('e234c36a-a70b-4015-bfad-2ac334352a59')
 
     async with asyncio.TaskGroup() as tg:
         tg.create_task(SystemStatisticsGatherer(queue).run())
@@ -35,7 +35,7 @@ async def main():
                     )
 
                     res = await client_session.post(
-                        f"{cfg.server_url}",
+                        f"{cfg.server_url}/api/snapshot",
                         data=snapshot.model_dump_json(),
                         headers={"Content-Type": "application/json"},
                     )

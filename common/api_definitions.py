@@ -12,6 +12,7 @@ else:
 class Metric(BaseModel):
     name: str
     unit: str
+    uuid: UUID
 
 
 class MetricReading(BaseModel):

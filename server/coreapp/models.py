@@ -9,6 +9,7 @@ class Device(models.Model):
 class Metric(models.Model):
     name = models.TextField()
     unit = models.CharField(max_length=20)
+    uuid = models.UUIDField(unique=True)
 
 
 class MetricReading(models.Model):

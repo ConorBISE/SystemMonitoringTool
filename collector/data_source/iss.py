@@ -1,3 +1,4 @@
+from uuid import UUID
 import aiohttp
 from urllib.parse import urlencode
 from datetime import timedelta, datetime
@@ -98,8 +99,8 @@ class ISSDataStream:
 
 class ISSStatisticsGatherer(MetricsGatherer):
     METRICS_MAP = {
-        "USLAB000059": Metric(name="Cabin Temperature", unit="°C"),
-        "NODE3000009": Metric(name="Clean Water Tank", unit="%"),
+        "USLAB000059": Metric(name="Cabin Temperature", unit="°C", uuid=UUID("c92f5533-5513-49ca-8309-4104cffab5e3")),
+        "NODE3000009": Metric(name="Clean Water Tank", unit="%", uuid=UUID("7a093d43-9795-4480-a200-f3b393290179")),
     }
 
     async def run(self):
