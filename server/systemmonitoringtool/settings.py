@@ -32,7 +32,6 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'daphne',
-    'rest_framework',
     'coreapp',
     'django.contrib.admin',
     'django.contrib.auth',
