@@ -8,7 +8,7 @@ import os
 logger = logging.getLogger(__name__)
 
 class Config(BaseModel):
-    a: int
+    server_url: str
     
 CONFIG: Config | None = None
     

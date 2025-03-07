@@ -35,7 +35,10 @@ async def main():
                         readings
                     )
                     
-                    await client_session.post("https://webhook.site/9799e737-9c0c-4a0b-b9fd-21d5b769e965", data=snapshot.to_json(), headers={"Content-Type": "application/json"})
+                    res = await client_session.post(f"{cfg.server_url}", data=snapshot.to_json(), headers={"Content-Type": "application/json"})
+
+                    if res.status != 200:
+                        logger.error("Failed to post data snapshot! Response: %s", res)
 
                 await asyncio.sleep(10)
 

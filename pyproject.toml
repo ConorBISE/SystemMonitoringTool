@@ -25,7 +25,6 @@ flask-sock = "^0.7.0"
 flask-sqlalchemy = "^3.1.1"
 django = "^5.1.5"
 channels = {extras = ["daphne"], version = "^4.2.0"}
-djangorestframework = "^3.15.2"
 
 
 
