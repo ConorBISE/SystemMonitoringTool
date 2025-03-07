@@ -16,3 +16,4 @@ class MetricReading(models.Model):
     metric = models.ForeignKey(Metric, on_delete=models.CASCADE)
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
     value = models.FloatField()
+    timestamp = models.DateTimeField()

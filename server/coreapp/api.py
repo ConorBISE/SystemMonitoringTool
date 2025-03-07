@@ -37,15 +37,28 @@ class MetricViewSet(viewsets.APIViewSet):
     default_request_body = api_definitions.Metric
     default_response_body = api_definitions.Metric
 
-    list_devices = views.ListView()
-    create_device = views.CreateView()
+    list_metrics = views.ListView()
+    create_metrics = views.CreateView()
 
-    read_devices = views.ReadView(path="/{uuid}")
-    update_device = views.UpdateView(path="/{uuid}")
-    delete_device = views.DeleteView(path="/{uuid}")
+    read_metrics = views.ReadView(path="/{uuid}")
+    update_metrics = views.UpdateView(path="/{uuid}")
+    delete_metrics = views.DeleteView(path="/{uuid}")
 
 
 api.add_router("/metric", metric_router)
+
+metric_reading_router = Router()
+
+class MetricReadingViewSet(viewsets.APIViewSet):
+    router = metric_reading_router
+    model = models.MetricReading
+    
+    default_request_body = api_definitions.MetricReading
+    default_response_body = api_definitions.MetricReading
+    
+    list_readings = views.ListView()
+
+api.add_router("/metric_reading", metric_reading_router)
 
 
 @api.post("/snapshot")

@@ -20,15 +20,23 @@ def battery_percentage() -> int | None:
     return battery.percent
 
 
-def cpu_usage() -> float | None:
+def cpu_usage() -> float:
     return psutil.cpu_percent()
 
 
 class SystemStatisticsGatherer(MetricsGatherer):
     # TODO: how do we sync these with the server-side definition of a metric?
-    BATTERY_PERCENTAGE_METRIC = Metric(name="Battery Percentage", unit="%", uuid=UUID("627524da-4a33-4dd5-a7ab-26ab88f1f549", version=4))
+    BATTERY_PERCENTAGE_METRIC = Metric(
+        name="Battery Percentage",
+        unit="%",
+        uuid=UUID("627524da-4a33-4dd5-a7ab-26ab88f1f549", version=4),
+    )
 
-    CPU_USAGE_METRIC = Metric(name="CPU Usage", unit="%", uuid=UUID("548d8eea-d100-4fe9-8357-30ae804eedd7", version=4))
+    CPU_USAGE_METRIC = Metric(
+        name="CPU Usage",
+        unit="%",
+        uuid=UUID("548d8eea-d100-4fe9-8357-30ae804eedd7", version=4),
+    )
 
     async def gather_data(self) -> List[MetricReading]:
         timestamp = int(time.time())
@@ -36,7 +44,9 @@ class SystemStatisticsGatherer(MetricsGatherer):
         battery = battery_percentage()
         cpu = cpu_usage()
 
-        metrics = []
+        metrics = [
+            MetricReading(metric=self.CPU_USAGE_METRIC, value=cpu, timestamp=timestamp)
+        ]
 
         if battery is not None:
             metrics.append(
@@ -48,14 +58,5 @@ class SystemStatisticsGatherer(MetricsGatherer):
             )
         else:
             logger.error("Error getting battery percentage! None returned.")
-
-        if cpu is not None:
-            metrics.append(
-                MetricReading(
-                    metric=self.CPU_USAGE_METRIC, value=cpu, timestamp=timestamp
-                )
-            )
-        else:
-            logger.error("Error getting CPU usage percentage! None returned.")
 
         return metrics

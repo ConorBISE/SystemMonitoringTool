@@ -1,6 +1,6 @@
 from uuid import UUID
 from typing import List, TYPE_CHECKING
-
+import datetime
 import os
 
 if "DJANGO_SETTINGS_MODULE" in os.environ and not TYPE_CHECKING:
@@ -18,7 +18,7 @@ class Metric(BaseModel):
 class MetricReading(BaseModel):
     metric: Metric
     value: float
-    timestamp: int
+    timestamp: datetime.datetime
 
 
 class Device(BaseModel):
