@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'systemmonitoringtool.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'server.systemmonitoringtool.settings')
 
 application = get_wsgi_application()

@@ -32,7 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'daphne',
-    'coreapp',
+    'server.coreapp',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'systemmonitoringtool.urls'
+ROOT_URLCONF = 'server.systemmonitoringtool.urls'
 
 TEMPLATES = [
     {
@@ -69,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'systemmonitoringtool.wsgi.application'
+WSGI_APPLICATION = 'server.systemmonitoringtool.wsgi.application'
 
 
 # Database
@@ -124,4 +124,4 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-ASGI_APPLICATION = "systemmonitoringtool.asgi.application"
+ASGI_APPLICATION = "server.systemmonitoringtool.asgi.application"
