@@ -1,0 +1,30 @@
+from uuid import UUID
+from typing import List, TYPE_CHECKING
+
+import os
+
+if "DJANGO_SETTINGS_MODULE" in os.environ and not TYPE_CHECKING:
+    from ninja import Schema as BaseModel
+else:
+    from pydantic import BaseModel
+
+
+class Metric(BaseModel):
+    name: str
+    unit: str
+
+
+class MetricReading(BaseModel):
+    metric: Metric
+    value: float
+    timestamp: int
+
+
+class Device(BaseModel):
+    name: str
+    uuid: UUID
+
+
+class Snapshot(BaseModel):
+    device: Device
+    readings: List[MetricReading]
