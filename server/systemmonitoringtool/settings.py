@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     "daphne",
     "ninja",
+    "corsheaders",
     "server.coreapp",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -126,3 +128,7 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ASGI_APPLICATION = "server.systemmonitoringtool.asgi.application"
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3001"
+]

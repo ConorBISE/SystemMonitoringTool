@@ -11,9 +11,9 @@
     "start": "vite"
   },
   "devDependencies": {
+    "@tanstack/router-plugin": "^1.113.0",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
-    "@tanstack/router-plugin": "^1.113.0",
     "@vitejs/plugin-react": "^4.3.2",
     "vite": "^6.0.3"
   },
@@ -21,6 +21,7 @@
     "@tanstack/react-router": "^1.112.18",
     "@tanstack/router-devtools": "^1.114.0",
     "react": "^19.0.0",
+    "react-charts": "3.0.0-beta.57",
     "react-dom": "^19.0.0"
   }
 }
