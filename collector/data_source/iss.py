@@ -1,3 +1,4 @@
+import logging
 from uuid import UUID
 import aiohttp
 from urllib.parse import urlencode
@@ -8,6 +9,7 @@ from typing import Dict, Iterable
 from collector.data_source.data_source import MetricsGatherer
 from common.api_definitions import Metric, MetricReading
 
+logger = logging.getLogger(__name__)
 
 class ISSDataStream:
     """
@@ -74,16 +76,20 @@ class ISSDataStream:
                     for line in msg.data.splitlines():
                         if not line.startswith("U"):
                             continue
+                        
+                        try:
+                            _, subscription_id, _, fields = line.split(",")
+                            group = self.subscription_group_map[int(subscription_id)]
+                            timestamp, value = fields.split("|")
 
-                        _, subscription_id, _, fields = line.split(",")
-                        group = self.subscription_group_map[int(subscription_id)]
-                        timestamp, value = fields.split("|")
+                            current_year = datetime.now().year - 1
+                            timestamp = datetime(current_year, 12, 31, 0, 0, 0) + timedelta(hours=float(timestamp))
+                            value = float(value)
 
-                        current_year = datetime.now().year - 1
-                        timestamp = datetime(current_year, 12, 31, 0, 0, 0) + timedelta(hours=float(timestamp))
-                        value = float(value)
-
-                        yield group, timestamp, value
+                            yield group, timestamp, value
+                        except Exception as e:
+                            logger.error("Failed to parse lightstream message: %s", line)
+                            logger.exception(e)
 
     async def _lightstreamer_request(
         self, ws: aiohttp.ClientWebSocketResponse, method: str, data: Dict[str, str]
