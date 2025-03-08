@@ -20,8 +20,9 @@
   "dependencies": {
     "@tanstack/react-router": "^1.112.18",
     "@tanstack/router-devtools": "^1.114.0",
+    "apexcharts": "^4.5.0",
     "react": "^19.0.0",
-    "react-charts": "3.0.0-beta.57",
+    "react-apexcharts": "^1.7.0",
     "react-dom": "^19.0.0"
   }
 }

@@ -33,7 +33,7 @@ async def main():
                     snapshot = Snapshot(
                         device=Device(name="Paige", uuid=guid), readings=readings
                     )
-
+                    
                     res = await client_session.post(
                         f"{cfg.server_url}/api/snapshot",
                         data=snapshot.model_dump_json(),

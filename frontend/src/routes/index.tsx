@@ -1,16 +1,18 @@
 import * as React from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { AxisOptions, Chart } from "react-charts";
 import { useEffect } from "react";
 import { useState } from "react";
-import { getMetricReadings, getMetrics, Metric, MetricReading } from "../lib/api";
+import {
+  getMetricReadings,
+  getMetrics,
+  Metric,
+  MetricReading,
+} from "../lib/api";
 import LineChart from "../components/LineChart";
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
 });
-
-type MyDatum = { x: number; y: number };
 
 function HomeComponent() {
   const [readings, setReadings] = useState<MetricReading[]>([]);
@@ -37,65 +39,23 @@ function HomeComponent() {
 
   const readingsFiltered = Object.keys(groupedByMetric).map((key) =>
     groupedByMetric[key]?.map((reading) => ({
-      value: reading.value,
-      timestamp: reading.timestamp,
+      y: reading.value,
+      x: new Date(reading.timestamp),
     }))
-  )
-
-  const metricsByUuid = Object.groupBy(metrics, (metric) => metric.uuid)
-
-  const metricsMeta = Object.keys(groupedByMetric).map(uuid => metricsByUuid[uuid][0]);
-
-  console.log(readingsFiltered[0])
-  return (
-    <div className="p-2">
-      <LineChart data={readingsFiltered[2] || []} metric={metricsMeta[2]} />
-    </div>
   );
 
-  // const data = [
-  //   {
-  //     label: 'React Charts',
-  //     data: [
-  //       {
-  //         x: 1,
-  //         y: 1,
-  //       },
-  //       {
-  //         x: 2,
-  //         y: 2,
-  //       },
-  //       {
-  //         x: 3,
-  //         y: 3,
-  //       },
-  //     ],
-  //   },
-  // ]
+  const metricsByUuid = Object.groupBy(metrics, (metric) => metric.uuid);
 
-  // const primaryAxis = React.useMemo(
-  //   (): AxisOptions<MyDatum> => ({
-  //     getValue: datum => datum.x,
-  //   }),
-  //   []
-  // )
+  const metricsMeta = Object.keys(groupedByMetric).map(
+    (uuid) => metricsByUuid[uuid][0]
+  );
 
-  // const secondaryAxes = React.useMemo(
-  //   (): AxisOptions<MyDatum>[] => [
-  //     {
-  //       getValue: datum => datum.y,
-  //     },
-  //   ],
-  //   []
-  // )
+  const charts = readingsFiltered.map((readingArray, i) => (
+    <div className="py-2">
+      <h1>{metricsMeta[i].name}</h1>
+      <LineChart data={readingArray || []} metric={metricsMeta[i]} />
+    </div>
+  ));
 
-  // return (
-  //   <div className="p-2 h-64">
-  //     <Chart options={{
-  //       data,
-  //       primaryAxis,
-  //       secondaryAxes,
-  //      }}></Chart>
-  //    </div>
-  // )
+  return <div className="p-2">{charts}</div>;
 }

@@ -1,39 +1,43 @@
-import { AxisOptions, Chart } from "react-charts";
+import ReactApexChart from "react-apexcharts";
 import { Metric } from "../lib/api";
-import { useMemo } from "react";
 
-export default function LineChart({ data, metric }: {data: any[], metric: Metric}) {
+export type ChartPoint = {
+    x: Date,
+    y: number
+}
 
-    const dataWrapped = [{
-        label: metric.name,
-        data
-    }]
-
-    console.log(dataWrapped)
-
-    const primaryAxis = useMemo(
-        (): AxisOptions<any> => ({
-            getValue: datum => new Date(datum.timestamp),
-        }),
-        []
-    )
-
-    const secondaryAxes = useMemo(
-        (): AxisOptions<any>[] => [
-            {
-                getValue: datum => datum.value,
-            },
-        ],
-        []
-    )
-    
-    return (
-        <div className="h-64">
-            <Chart options={{
-                data: dataWrapped,
-                primaryAxis,
-                secondaryAxes
-            }} />
-        </div>
-    )
+export default function LineChart({
+  data,
+  metric,
+}: {
+  data: ChartPoint[];
+  metric: Metric;
+}) {
+  return (
+    <ReactApexChart
+      options={{
+        chart: {
+          type: "line",
+          zoom: {
+            enabled: true,
+            allowMouseWheelZoom: false
+          }
+        },
+        xaxis: {
+          type: "datetime",
+          title: {
+            text: "Timestamp",
+          },
+        },
+        yaxis: {
+          title: {
+            text: `${metric.name} (${metric.unit})`,
+          },
+          decimalsInFloat: 2
+        },
+      }}
+      series={[{ name: metric.name, data }]}
+      height={350}
+    />
+  );
 }

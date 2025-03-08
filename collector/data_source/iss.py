@@ -80,12 +80,7 @@ class ISSDataStream:
                         timestamp, value = fields.split("|")
 
                         current_year = datetime.now().year - 1
-                        timestamp = int(
-                            (
-                                datetime(current_year, 12, 31, 0, 0, 0)
-                                + timedelta(hours=float(timestamp))
-                            ).timestamp()
-                        )
+                        timestamp = datetime(current_year, 12, 31, 0, 0, 0) + timedelta(hours=float(timestamp))
                         value = float(value)
 
                         yield group, timestamp, value

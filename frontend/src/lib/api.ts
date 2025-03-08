@@ -22,6 +22,6 @@ export async function getMetrics() {
 }
 
 export async function getMetricReadings() {
-    const res: ListResponse<MetricReading> = await (await fetch("http://localhost:8000/api/metric_reading")).json()
-    return res.items
+    const res: MetricReading[] = await (await fetch("http://localhost:8000/api/metric_reading")).json()
+    return res
 }

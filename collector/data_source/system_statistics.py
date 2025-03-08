@@ -1,3 +1,4 @@
+import datetime
 import logging
 import time
 from typing import List
@@ -39,7 +40,7 @@ class SystemStatisticsGatherer(MetricsGatherer):
     )
 
     async def gather_data(self) -> List[MetricReading]:
-        timestamp = int(time.time())
+        timestamp = datetime.datetime.now()
 
         battery = battery_percentage()
         cpu = cpu_usage()

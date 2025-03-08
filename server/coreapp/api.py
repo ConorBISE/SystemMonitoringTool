@@ -56,7 +56,7 @@ class MetricReadingViewSet(viewsets.APIViewSet):
     default_request_body = api_definitions.MetricReading
     default_response_body = api_definitions.MetricReading
     
-    list_readings = views.ListView()
+    list_readings = views.ListView(pagination_class=None)
 
 api.add_router("/metric_reading", metric_reading_router)
 
@@ -73,6 +73,7 @@ def snapshot(request: HttpRequest, snapshot: api_definitions.Snapshot):
                 metric=metrics.get(uuid=reading.metric.uuid),
                 device=device,
                 value=reading.value,
+                timestamp=reading.timestamp
             )
             for reading in snapshot.readings
         ]
