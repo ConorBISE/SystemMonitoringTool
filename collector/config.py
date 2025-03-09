@@ -2,7 +2,7 @@ import logging
 import os
 from pathlib import Path
 import sys
-from typing import Optional
+from typing import List, Optional
 
 import colorlog
 from appdirs import user_data_dir
@@ -17,6 +17,7 @@ APP_NAME = "SystemMonitoringTool"
 class Config(BaseModel):
     server_url: str
     aggregator_name: str
+    device_gatherer_classes: List[str]
 
 class AppData(BaseModel):
     aggregator: Aggregator

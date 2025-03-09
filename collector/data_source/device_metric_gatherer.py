@@ -60,13 +60,16 @@ class DeviceMetricGatherer:
             if metric_list.count > 0:
                 metric = metric_list.items[0]
             else:
-                # We're going to need to create a device
+                # We're going to need to create a metric
                 metric = await client.create_metric(metric_creation_request)
                 
                 if metric is None:
                     raise ValueError("Error creating metric %s", metric_creation_request)
                 
             return metric
+
+    async def init_metrics(self) -> None:
+        raise NotImplementedError()
 
     async def gather_data(self) -> List[MetricReading]:
         raise NotImplementedError()
