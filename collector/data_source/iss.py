@@ -1,13 +1,12 @@
 import logging
-from uuid import UUID
 import aiohttp
 from urllib.parse import urlencode
 from datetime import timedelta, datetime
 
 from typing import Dict, Iterable
 
-from collector.data_source.data_source import MetricsGatherer
-from common.api_definitions import Metric, MetricReading
+from collector.data_source.device_metric_gatherer import DeviceMetricGatherer
+from common.api_definitions import Metric, MetricCreationRequest, MetricReading
 
 logger = logging.getLogger(__name__)
 
@@ -98,11 +97,14 @@ class ISSDataStream:
         await ws.send_str(d)
 
 
-class ISSStatisticsGatherer(MetricsGatherer):
-    METRICS_MAP = {
-        "USLAB000059": Metric(name="Cabin Temperature", unit="°C", uuid=UUID("c92f5533-5513-49ca-8309-4104cffab5e3")),
-        "NODE3000009": Metric(name="Clean Water Tank", unit="%", uuid=UUID("7a093d43-9795-4480-a200-f3b393290179")),
-    }
+class ISSStatisticsGatherer(DeviceMetricGatherer):
+    NAME = "ISS"
+    
+    async def init_metrics(self):    
+        self.METRICS_MAP = {
+            "USLAB000059": await self.find_create_metric(MetricCreationRequest(name="Cabin Temperature", unit="°C")),
+            "NODE3000009": await self.find_create_metric(MetricCreationRequest(name="Clean Water Tank", unit="%")),
+        }
 
     async def run(self):
         async for group, timestamp, value in ISSDataStream(
@@ -110,6 +112,6 @@ class ISSStatisticsGatherer(MetricsGatherer):
         ).run():
             await self.queue.put(
                 MetricReading(
-                    metric=self.METRICS_MAP[group], value=value, timestamp=timestamp
+                    metric=self.METRICS_MAP[group], value=value, timestamp=timestamp, device=await self.device
                 )
             )

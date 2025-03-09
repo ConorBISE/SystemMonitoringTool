@@ -1,12 +1,12 @@
 import datetime
 import logging
-from typing import List
+from typing import Dict, List
 from uuid import UUID
 
 import psutil
 
-from collector.data_source.data_source import MetricsGatherer
-from common.api_definitions import Metric, MetricReading
+from collector.data_source.device_metric_gatherer import DeviceMetricGatherer
+import common.api_definitions as ad
 
 logger = logging.getLogger(__name__)
 
@@ -24,36 +24,42 @@ def cpu_usage() -> float:
     return psutil.cpu_percent()
 
 
-class SystemStatisticsGatherer(MetricsGatherer):
-    # TODO: how do we sync these with the server-side definition of a metric?
-    BATTERY_PERCENTAGE_METRIC = Metric(
-        name="Battery Percentage",
-        unit="%",
-        uuid=UUID("627524da-4a33-4dd5-a7ab-26ab88f1f549", version=4),
-    )
-
-    CPU_USAGE_METRIC = Metric(
-        name="CPU Usage",
-        unit="%",
-        uuid=UUID("548d8eea-d100-4fe9-8357-30ae804eedd7", version=4),
-    )
-
-    async def gather_data(self) -> List[MetricReading]:
+class SystemStatisticsGatherer(DeviceMetricGatherer):
+    NAME = "System Statistics"
+    
+    async def init_metrics(self):
+        self.BATTERY_PERCENTAGE_METRIC = await self.find_create_metric(
+            ad.MetricCreationRequest(
+                name="Battery Percentage",
+                unit="%"
+            )
+        )
+        
+        self.CPU_USAGE_METRIC = await self.find_create_metric(   
+                ad.MetricCreationRequest(
+                    name="CPU Usage",
+                    unit="%",
+                )
+        )
+            
+    
+    async def gather_data(self) -> List[ad.MetricReading]:
         timestamp = datetime.datetime.now()
 
         battery = battery_percentage()
         cpu = cpu_usage()
 
         metrics = [
-            MetricReading(metric=self.CPU_USAGE_METRIC, value=cpu, timestamp=timestamp)
+            ad.MetricReading(metric=self.CPU_USAGE_METRIC, value=cpu, timestamp=timestamp, device=await self.device)
         ]
 
         if battery is not None:
             metrics.append(
-                MetricReading(
+                ad.MetricReading(
                     metric=self.BATTERY_PERCENTAGE_METRIC,
                     value=battery,
                     timestamp=timestamp,
+                    device=await self.device
                 )
             )
         else:

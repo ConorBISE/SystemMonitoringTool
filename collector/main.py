@@ -1,6 +1,3 @@
-from uuid import UUID, uuid4
-
-import aiohttp
 import collector.server_api as server_api 
 import common.api_definitions as ad 
 from .data_source.system_statistics import SystemStatisticsGatherer
@@ -23,35 +20,35 @@ class App:
         async with server_api.APIClient() as client:
             app_data = config.read_app_data()
 
-            if app_data is None:
+            if app_data is None or app_data.aggregator.name != cfg.aggregator_name:
                 # This is our first run. We'll need to create an aggregator for the first time.
-                aggregator = ad.Aggregator(
-                    name=cfg.aggregator_name,
-                    uuid=uuid4() # TODO - this should be generated server-side
-                )
-                
-                await client.create_aggregator(aggregator)
+                aggregator = await client.create_aggregator(ad.AggregatorCreationRequest(
+                    name=cfg.aggregator_name
+                ))
+
+                if aggregator is None:
+                    raise ValueError("Error registering aggregator!")
 
                 app_data = config.AppData(aggregator=aggregator)
                 config.write_app_data(app_data)
                 return aggregator
-            else:
-                if app_data.aggregator.name != cfg.aggregator_name:
-                    app_data.aggregator.name = cfg.aggregator_name
-                    await client.update_aggregator(app_data.aggregator.uuid, app_data.aggregator)
-                    config.write_app_data(app_data)
-                
+            else:                
                 return app_data.aggregator
 
     async def run(self):
-        await self.fetch_or_register_aggregator()
+        aggregator = await self.fetch_or_register_aggregator()
         
         queue: asyncio.Queue[ad.MetricReading] = asyncio.Queue()
-        guid = UUID('e234c36a-a70b-4015-bfad-2ac334352a59')
 
         async with asyncio.TaskGroup() as tg:
-            tg.create_task(SystemStatisticsGatherer(queue).run())
-            tg.create_task(ISSStatisticsGatherer(queue).run())
+            ss = SystemStatisticsGatherer(aggregator, queue)
+            await ss.init_metrics()
+            
+            iss = ISSStatisticsGatherer(aggregator, queue)
+            await iss.init_metrics()
+            
+            tg.create_task(ss.run())
+            tg.create_task(iss.run())
 
             async with server_api.APIClient() as client:
                 while True:
@@ -61,7 +58,7 @@ class App:
                         readings = [await queue.get() for _ in range(num_metric_readings)]
 
                         snapshot = ad.Snapshot(
-                            device=ad.Device(name="Paige", uuid=guid), readings=readings
+                            metric_readings=readings
                         )
                         
                         ret = await client.create_snapshot(snapshot)

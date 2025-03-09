@@ -1,5 +1,5 @@
 from django.http import HttpRequest
-from common import api_definitions
+from common import api_definitions as ad
 from . import models
 
 from ninja import NinjaAPI, Router
@@ -14,11 +14,11 @@ aggregator_router = Router()
 class AggregatorViewSet(viewsets.APIViewSet):
     router = aggregator_router
     model = models.Aggregator
-    default_request_body = api_definitions.Aggregator
-    default_response_body = api_definitions.Aggregator
+    default_request_body = ad.Aggregator
+    default_response_body = ad.Aggregator
 
     list_aggregators = views.ListView()
-    create_aggregators = views.CreateView()
+    create_aggregators = views.CreateView(request_body=ad.AggregatorCreationRequest)
 
     read_aggregators = views.ReadView(path="/{uuid}")
     update_aggregators = views.UpdateView(path="/{uuid}")
@@ -33,11 +33,11 @@ device_router = Router()
 class DeviceViewSet(viewsets.APIViewSet):
     router = device_router
     model = models.Device
-    default_request_body = api_definitions.Device
-    default_response_body = api_definitions.Device
+    default_request_body = ad.Device
+    default_response_body = ad.Device
 
-    list_devices = views.ListView()
-    create_device = views.CreateView()
+    list_devices = views.ListView(query_parameters=ad.DeviceQueryParams)
+    create_device = views.CreateView(request_body=ad.DeviceCreationRequest)
 
     read_devices = views.ReadView(path="/{uuid}")
     update_device = views.UpdateView(path="/{uuid}")
@@ -53,11 +53,11 @@ metric_router = Router()
 class MetricViewSet(viewsets.APIViewSet):
     router = metric_router
     model = models.Metric
-    default_request_body = api_definitions.Metric
-    default_response_body = api_definitions.Metric
+    default_request_body = ad.Metric
+    default_response_body = ad.Metric
 
-    list_metrics = views.ListView()
-    create_metrics = views.CreateView()
+    list_metrics = views.ListView(query_parameters=ad.MetricQueryParams)
+    create_metrics = views.CreateView(request_body=ad.MetricCreationRequest)
 
     read_metrics = views.ReadView(path="/{uuid}")
     update_metrics = views.UpdateView(path="/{uuid}")
@@ -73,8 +73,8 @@ class MetricReadingViewSet(viewsets.APIViewSet):
     router = metric_reading_router
     model = models.Reading
 
-    default_request_body = api_definitions.MetricReading
-    default_response_body = api_definitions.MetricReading
+    default_request_body = ad.MetricReading
+    default_response_body = ad.MetricReading
 
     list_readings = views.ListView(pagination_class=None)
 
@@ -83,23 +83,16 @@ api.add_router("/metric_reading/", metric_reading_router)
 
 
 @api.post("/snapshot")
-def snapshot(request: HttpRequest, snapshot: api_definitions.Snapshot):
-    device = models.Device.objects.get(uuid=snapshot.device.uuid)
-
-    metrics = models.Metric.objects.filter(
-        uuid__in=[i.metric.uuid for i in snapshot.readings]
-    )
-
+def snapshot(request: HttpRequest, snapshot: ad.Snapshot):    
     models.Reading.objects.bulk_create(
         [
             models.Reading(
-                metric=metrics.get(uuid=reading.metric.uuid),
-                device=device,
+                metric_id=reading.metric.uuid,
+                device_id=reading.device.uuid, 
                 value=reading.value,
-                timestamp=reading.timestamp,
-            )
-            for reading in snapshot.readings
+                timestamp=reading.timestamp
+            ) for reading in snapshot.metric_readings
         ]
     )
 
-    return None
+    return snapshot

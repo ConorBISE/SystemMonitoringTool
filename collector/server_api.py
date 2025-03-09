@@ -1,8 +1,8 @@
-import asyncio
 import functools
 import inspect
 import logging
-from typing import Optional, Self
+from types import UnionType
+from typing import Self, get_args
 import urllib.parse
 from uuid import UUID
 
@@ -59,7 +59,12 @@ class APIClient:
                     logger.error(res)
                     return None
 
-                return wrapped.__annotations__["return"].model_validate_json(await res.text())
+                return_type = wrapped.__annotations__["return"]
+                
+                if isinstance(return_type, UnionType):
+                    return_type = get_args(return_type)[0]
+                
+                return return_type.model_validate_json(await res.text())
 
             return inner
 
@@ -69,27 +74,26 @@ class APIClient:
     post = functools.partial(request, "post")
     put = functools.partial(request, "put")
 
-    @get("/metric/{uuid}")
-    async def get_metric(self, uuid: UUID) -> ad.Metric: ...
+    @get("/device?name={name}&aggregator_id={aggregator_id}")
+    async def get_device_by_name_and_aggregator(self, name: str, aggregator_id: UUID) -> ad.ListResponse[ad.Device] | None: ...
 
-    @get("/metric?name={name}")
-    async def get_metric_by_name(self, name: str) -> ad.ListResponse[ad.Metric]: ...
+    @post("/device/")
+    async def create_device(self, body: ad.DeviceCreationRequest) -> ad.Device | None: ...
+
+    @get("/metric/{uuid}")
+    async def get_metric(self, uuid: UUID) -> ad.Metric | None: ...
+
+    @get("/metric?name={name}&unit={unit}")
+    async def get_metric_by_name_and_unit(self, name: str, unit: str) -> ad.ListResponse[ad.Metric] | None: ...
+
+    @post("/metric/")
+    async def create_metric(self, body: ad.MetricCreationRequest) -> ad.Metric | None: ...
 
     @post("/aggregator/")
-    async def create_aggregator(self, body: ad.Aggregator) -> ad.Aggregator: ...
+    async def create_aggregator(self, body: ad.AggregatorCreationRequest) -> ad.Aggregator | None: ...
 
     @put("/aggregator/{uuid}")
-    async def update_aggregator(self, uuid: UUID, body: ad.Aggregator) -> ad.Aggregator: ...
+    async def update_aggregator(self, uuid: UUID, body: ad.Aggregator) -> ad.Aggregator | None: ...
 
     @post("/snapshot")
-    async def create_snapshot(self, body: ad.Snapshot) -> ad.Snapshot: ...
-
-
-if __name__ == "__main__":
-    config.setup_logging()
-    
-    async def main():
-        async with APIClient() as client:
-            logger.info(await client.get_metric_by_name("Test"))
-    
-    asyncio.run(main())
+    async def create_snapshot(self, body: ad.Snapshot) -> ad.Snapshot | None: ...
