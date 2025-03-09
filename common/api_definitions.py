@@ -19,6 +19,7 @@ class OptionalModel(BaseModel):
 
         cls.model_rebuild(force=True)
 
+
 class AggregatorCreationRequest(BaseModel):
     name: str
 
@@ -36,8 +37,8 @@ class Metric(MetricCreationRequest):
     uuid: UUID
 
 
-class MetricQueryParams(Metric, OptionalModel):
-    ...
+class MetricQueryParams(Metric, OptionalModel): ...
+
 
 class DeviceCreationRequest(BaseModel):
     name: str
@@ -48,15 +49,17 @@ class Device(DeviceCreationRequest):
     uuid: UUID
 
 
-class DeviceQueryParams(Metric, OptionalModel):
-    ...
+class DeviceQueryParams(Metric, OptionalModel): ...
 
 
 class MetricReading(BaseModel):
-    metric: Metric
-    device: Device
+    metric_id: UUID
+    device_id: UUID
     value: float
     timestamp: datetime.datetime
+
+
+class MetricReadingQueryParams(MetricReading, OptionalModel): ...
 
 
 class Snapshot(BaseModel):

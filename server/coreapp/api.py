@@ -1,8 +1,11 @@
+import datetime
+from typing import List, Optional
+from uuid import UUID
 from django.http import HttpRequest
 from common import api_definitions as ad
 from . import models
 
-from ninja import NinjaAPI, Router
+from ninja import Field, FilterSchema, NinjaAPI, Query, Router
 from ninja_crud import viewsets, views
 
 api = NinjaAPI()
@@ -69,29 +72,32 @@ api.add_router("/metric/", metric_router)
 metric_reading_router = Router()
 
 
-class MetricReadingViewSet(viewsets.APIViewSet):
-    router = metric_reading_router
-    model = models.Reading
-
-    default_request_body = ad.MetricReading
-    default_response_body = ad.MetricReading
-
-    list_readings = views.ListView(pagination_class=None)
+class MetricReadingFilter(FilterSchema):
+    metric_id: Optional[UUID] = None
+    timestamp_min: Optional[datetime.datetime] = Field(None, q="timestamp__gt")  # type: ignore
+    timestamp_max: Optional[datetime.datetime] = Field(None, q="timestamp__lt")  # type: ignore
 
 
-api.add_router("/metric_reading/", metric_reading_router)
+@api.get("/metric_reading/", response=List[ad.MetricReading])
+def metric_reading(request: HttpRequest, filters: Query[MetricReadingFilter]):
+    readings = models.Reading.objects.all()
+    readings = filters.filter(readings).all()
+    
+    import time; time.sleep(2)
+    return readings
 
 
 @api.post("/snapshot")
-def snapshot(request: HttpRequest, snapshot: ad.Snapshot):    
+def snapshot(request: HttpRequest, snapshot: ad.Snapshot):
     models.Reading.objects.bulk_create(
         [
             models.Reading(
-                metric_id=reading.metric.uuid,
-                device_id=reading.device.uuid, 
+                metric_id=reading.metric_id,
+                device_id=reading.device_id,
                 value=reading.value,
-                timestamp=reading.timestamp
-            ) for reading in snapshot.metric_readings
+                timestamp=reading.timestamp,
+            )
+            for reading in snapshot.metric_readings
         ]
     )
 

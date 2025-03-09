@@ -112,6 +112,6 @@ class ISSStatisticsGatherer(DeviceMetricGatherer):
         ).run():
             await self.queue.put(
                 MetricReading(
-                    metric=self.METRICS_MAP[group], value=value, timestamp=timestamp, device=await self.device
+                    metric_id=self.METRICS_MAP[group].uuid, value=value, timestamp=timestamp, device_id=(await self.device).uuid
                 )
             )

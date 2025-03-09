@@ -50,16 +50,16 @@ class SystemStatisticsGatherer(DeviceMetricGatherer):
         cpu = cpu_usage()
 
         metrics = [
-            ad.MetricReading(metric=self.CPU_USAGE_METRIC, value=cpu, timestamp=timestamp, device=await self.device)
+            ad.MetricReading(metric_id=self.CPU_USAGE_METRIC.uuid, value=cpu, timestamp=timestamp, device_id=(await self.device).uuid)
         ]
 
         if battery is not None:
             metrics.append(
                 ad.MetricReading(
-                    metric=self.BATTERY_PERCENTAGE_METRIC,
+                    metric_id=self.BATTERY_PERCENTAGE_METRIC.uuid,
                     value=battery,
                     timestamp=timestamp,
-                    device=await self.device
+                    device_id=(await self.device).uuid
                 )
             )
         else:

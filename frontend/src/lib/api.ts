@@ -1,3 +1,4 @@
+import { TimeseriesBound } from "./util"
 
 export type Metric = {
     name: string
@@ -6,7 +7,8 @@ export type Metric = {
 }
 
 export type MetricReading = {
-    metric: Metric
+    metric_id: string
+    device_id: string
     value: number
     timestamp: string
 }
@@ -21,7 +23,15 @@ export async function getMetrics() {
     return res.items
 }
 
-export async function getMetricReadings() {
-    const res: MetricReading[] = await (await fetch("http://localhost:8000/api/metric_reading")).json()
+export async function getMetricReadings(metricId: string, timeseriesBound?: TimeseriesBound) {
+    const query = new URLSearchParams()
+    query.set("metric_id", metricId)
+
+    if (timeseriesBound) {
+        query.set("timestamp_min", timeseriesBound.min.toISOString())
+        query.set("timestamp_max", timeseriesBound.max.toISOString())
+    }
+        
+    const res: MetricReading[] = await (await fetch(`http://localhost:8000/api/metric_reading?${query.toString()}`)).json()
     return res
 }
