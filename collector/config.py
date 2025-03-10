@@ -18,6 +18,8 @@ class Config(BaseModel):
     server_url: str
     aggregator_name: str
     device_gatherer_classes: List[str]
+    num_failures_for_backoff: int
+    backoff_intervals: int
 
 class AppData(BaseModel):
     aggregator: Aggregator

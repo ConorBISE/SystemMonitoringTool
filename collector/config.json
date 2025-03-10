@@ -4,5 +4,7 @@
     "device_gatherer_classes": [
         "collector.data_source.system_statistics.SystemStatisticsGatherer",
         "collector.data_source.iss.ISSStatisticsGatherer"
-    ]
+    ],
+    "num_failures_for_backoff": 10,
+    "backoff_intervals": 5
 }

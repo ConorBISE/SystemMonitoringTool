@@ -1,3 +1,4 @@
+import enum
 from uuid import UUID
 from typing import Any, Generic, List, TYPE_CHECKING, Optional, TypeVar
 import datetime
@@ -64,6 +65,15 @@ class MetricReadingQueryParams(MetricReading, OptionalModel): ...
 
 class Snapshot(BaseModel):
     metric_readings: List[MetricReading]
+
+
+class ControlCommand(enum.StrEnum):
+    OpenBrowser = "open_browser"
+
+
+class ControlMessage(BaseModel):
+    command: ControlCommand
+    data: str
 
 
 T = TypeVar("T")
