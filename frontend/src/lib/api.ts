@@ -1,5 +1,7 @@
 import { TimeseriesBound } from "./util"
 
+const BASE_URL = "http://systemmonitortool.ddns.net/api"
+
 export type Metric = {
     name: string
     unit: string
@@ -19,7 +21,7 @@ type ListResponse<T> = {
 }
 
 export async function getMetrics() {
-    const res: ListResponse<Metric> = await (await fetch("http://localhost:8000/api/metric")).json()
+    const res: ListResponse<Metric> = await (await fetch(`${BASE_URL}/metric`)).json()
     return res.items
 }
 
@@ -32,6 +34,6 @@ export async function getMetricReadings(metricId: string, timeseriesBound?: Time
         query.set("timestamp_max", timeseriesBound.max.toISOString())
     }
         
-    const res: MetricReading[] = await (await fetch(`http://localhost:8000/api/metric_reading?${query.toString()}`)).json()
+    const res: MetricReading[] = await (await fetch(`${BASE_URL}/metric_reading?${query.toString()}`)).json()
     return res
 }
