@@ -1,5 +1,5 @@
 {
-    "server_url": "http://systemmonitortool.ddns.net/api/",
+    "server_url": "https://systemmonitortool.ddns.net/api/",
     "aggregator_name": "Paige",
     "device_gatherer_classes": [
         "collector.data_source.system_statistics.SystemStatisticsGatherer",

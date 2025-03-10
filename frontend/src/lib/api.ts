@@ -1,6 +1,6 @@
 import { TimeseriesBound } from "./util"
 
-const BASE_URL = "http://systemmonitortool.ddns.net/api"
+const BASE_URL = "https://systemmonitortool.ddns.net/api"
 
 export type Metric = {
     name: string
