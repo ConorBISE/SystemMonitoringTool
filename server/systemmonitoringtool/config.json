@@ -1,0 +1,5 @@
+{
+    "debug": true,
+    "host": "localhost:8000",
+    "db_url": "sqlite://db.sqlite3"
+}

@@ -12,9 +12,20 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
+import dj_database_url
+from pydantic import BaseModel
+
+from common.config import load_config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+class Config(BaseModel):
+    debug: bool
+    host: str
+    db_url: str
+
+CONFIG = load_config(Config, __file__)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -23,9 +34,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-@s$f7(f@^pq7ia-eo+txs5ucqco_mu9adxzyc%b5fm*o&$1mo_"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = CONFIG.debug
 
-ALLOWED_HOSTS = ["systemmonitortool.ddns.net"]
+ALLOWED_HOSTS = [CONFIG.host]
 
 
 # Application definition
@@ -79,10 +90,7 @@ WSGI_APPLICATION = "server.systemmonitoringtool.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": dj_database_url.config(default=CONFIG.db_url)
 }
 
 

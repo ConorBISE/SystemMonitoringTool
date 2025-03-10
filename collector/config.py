@@ -9,6 +9,7 @@ from appdirs import user_data_dir
 from pydantic import BaseModel
 
 from common.api_definitions import Aggregator
+from common.config import load_config
 
 logger = logging.getLogger(__name__)
 
@@ -22,23 +23,12 @@ class Config(BaseModel):
     num_failures_for_backoff: int
     backoff_intervals: int
 
+CONFIG = load_config(Config, __file__)
 
 class AppData(BaseModel):
     aggregator: Aggregator
 
 
-CONFIG: Config | None = None
-
-
-def load_config() -> Config:
-    global CONFIG
-
-    if CONFIG is None:
-        logger.debug("Config not loaded; loading from file.")
-        with open(os.path.join(os.path.dirname(__file__), "config.json")) as f:
-            CONFIG = Config.model_validate_json(f.read())
-
-    return CONFIG
 
 
 def _get_app_data_file() -> Path:
