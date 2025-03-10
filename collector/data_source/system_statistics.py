@@ -1,7 +1,6 @@
 import datetime
 import logging
-from typing import Dict, List
-from uuid import UUID
+from typing import List
 
 import psutil
 
@@ -26,23 +25,19 @@ def cpu_usage() -> float:
 
 class SystemStatisticsGatherer(DeviceMetricGatherer):
     NAME = "System Statistics"
-    
+
     async def init_metrics(self):
         self.BATTERY_PERCENTAGE_METRIC = await self.find_create_metric(
+            ad.MetricCreationRequest(name="Battery Percentage", unit="%")
+        )
+
+        self.CPU_USAGE_METRIC = await self.find_create_metric(
             ad.MetricCreationRequest(
-                name="Battery Percentage",
-                unit="%"
+                name="CPU Usage",
+                unit="%",
             )
         )
-        
-        self.CPU_USAGE_METRIC = await self.find_create_metric(   
-                ad.MetricCreationRequest(
-                    name="CPU Usage",
-                    unit="%",
-                )
-        )
-            
-    
+
     async def gather_data(self) -> List[ad.MetricReading]:
         timestamp = datetime.datetime.now()
 
@@ -50,7 +45,12 @@ class SystemStatisticsGatherer(DeviceMetricGatherer):
         cpu = cpu_usage()
 
         metrics = [
-            ad.MetricReading(metric_id=self.CPU_USAGE_METRIC.uuid, value=cpu, timestamp=timestamp, device_id=(await self.device).uuid)
+            ad.MetricReading(
+                metric_id=self.CPU_USAGE_METRIC.uuid,
+                value=cpu,
+                timestamp=timestamp,
+                device_id=(await self.device).uuid,
+            )
         ]
 
         if battery is not None:
@@ -59,7 +59,7 @@ class SystemStatisticsGatherer(DeviceMetricGatherer):
                     metric_id=self.BATTERY_PERCENTAGE_METRIC.uuid,
                     value=battery,
                     timestamp=timestamp,
-                    device_id=(await self.device).uuid
+                    device_id=(await self.device).uuid,
                 )
             )
         else:

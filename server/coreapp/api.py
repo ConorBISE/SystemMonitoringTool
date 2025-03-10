@@ -1,14 +1,15 @@
 import datetime
 from typing import List, Optional
 from uuid import UUID
-from django.http import HttpRequest
-from common import api_definitions as ad
-from . import models
-
-from ninja import Field, FilterSchema, NinjaAPI, Query, Router
-from ninja_crud import viewsets, views
 
 from channels.layers import get_channel_layer
+from django.http import HttpRequest
+from ninja import Field, FilterSchema, NinjaAPI, Query, Router
+from ninja_crud import views, viewsets
+
+from common import api_definitions as ad
+
+from . import models
 
 api = NinjaAPI()
 
@@ -84,8 +85,6 @@ class MetricReadingFilter(FilterSchema):
 def metric_reading(request: HttpRequest, filters: Query[MetricReadingFilter]):
     readings = models.Reading.objects.all()
     readings = filters.filter(readings).all()
-    
-    import time; time.sleep(2)
     return readings
 
 
@@ -105,14 +104,17 @@ def snapshot(request: HttpRequest, snapshot: ad.Snapshot):
 
     return snapshot
 
+
 @api.post("/control/{aggregator_id}")
-async def control(request: HttpRequest, aggregator_id: UUID, control_message: ad.ControlMessage):
+async def control(
+    request: HttpRequest, aggregator_id: UUID, control_message: ad.ControlMessage
+):
     channel_layer = get_channel_layer()
-    
+
     group_name = f"control_{aggregator_id}"
-    
+
     if channel_layer is not None:
-        await channel_layer.group_send(group_name, {
-            "type": "control.message",
-            "message": control_message.model_dump_json()
-        })
+        await channel_layer.group_send(
+            group_name,
+            {"type": "control.message", "message": control_message.model_dump_json()},
+        )

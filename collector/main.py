@@ -1,8 +1,6 @@
 import asyncio
 import importlib
 import logging
-import os
-import sys
 import webbrowser
 
 import collector.server_api as server_api

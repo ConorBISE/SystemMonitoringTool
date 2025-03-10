@@ -129,12 +129,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ASGI_APPLICATION = "server.systemmonitoringtool.asgi.application"
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
-}
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3001"
-]
+CORS_ALLOWED_ORIGINS = ["http://localhost:3001"]

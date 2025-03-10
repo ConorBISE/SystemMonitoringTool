@@ -6,9 +6,10 @@ from datetime import timedelta, datetime
 from typing import Dict, Iterable
 
 from collector.data_source.device_metric_gatherer import DeviceMetricGatherer
-from common.api_definitions import Metric, MetricCreationRequest, MetricReading
+import common.api_definitions as ad
 
 logger = logging.getLogger(__name__)
+
 
 class ISSDataStream:
     """
@@ -75,19 +76,23 @@ class ISSDataStream:
                     for line in msg.data.splitlines():
                         if not line.startswith("U"):
                             continue
-                        
+
                         try:
                             _, subscription_id, _, fields = line.split(",")
                             group = self.subscription_group_map[int(subscription_id)]
                             timestamp, value = fields.split("|")
 
                             current_year = datetime.now().year - 1
-                            timestamp = datetime(current_year, 12, 31, 0, 0, 0) + timedelta(hours=float(timestamp))
+                            timestamp = datetime(
+                                current_year, 12, 31, 0, 0, 0
+                            ) + timedelta(hours=float(timestamp))
                             value = float(value)
 
                             yield group, timestamp, value
                         except Exception as e:
-                            logger.error("Failed to parse lightstream message: %s", line)
+                            logger.error(
+                                "Failed to parse lightstream message: %s", line
+                            )
                             logger.exception(e)
 
     async def _lightstreamer_request(
@@ -99,11 +104,15 @@ class ISSDataStream:
 
 class ISSStatisticsGatherer(DeviceMetricGatherer):
     NAME = "ISS"
-    
-    async def init_metrics(self):    
+
+    async def init_metrics(self):
         self.METRICS_MAP = {
-            "USLAB000059": await self.find_create_metric(MetricCreationRequest(name="Cabin Temperature", unit="°C")),
-            "NODE3000009": await self.find_create_metric(MetricCreationRequest(name="Clean Water Tank", unit="%")),
+            "USLAB000059": await self.find_create_metric(
+                ad.MetricCreationRequest(name="Cabin Temperature", unit="°C")
+            ),
+            "NODE3000009": await self.find_create_metric(
+                ad.MetricCreationRequest(name="Clean Water Tank", unit="%")
+            ),
         }
 
     async def run(self):
@@ -111,7 +120,10 @@ class ISSStatisticsGatherer(DeviceMetricGatherer):
             self.METRICS_MAP.keys()
         ).run():
             await self.queue.put(
-                MetricReading(
-                    metric_id=self.METRICS_MAP[group].uuid, value=value, timestamp=timestamp, device_id=(await self.device).uuid
+                ad.MetricReading(
+                    metric_id=self.METRICS_MAP[group].uuid,
+                    value=value,
+                    timestamp=timestamp,
+                    device_id=(await self.device).uuid,
                 )
             )

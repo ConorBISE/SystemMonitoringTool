@@ -1,6 +1,6 @@
 import enum
 from uuid import UUID
-from typing import Any, Generic, List, TYPE_CHECKING, Optional, TypeVar
+from typing import Any, Generic, List, TYPE_CHECKING, TypeVar
 import datetime
 import os
 
