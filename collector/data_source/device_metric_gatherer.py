@@ -58,8 +58,8 @@ class DeviceMetricGatherer:
         self, metric_creation_request: ad.MetricCreationRequest
     ) -> ad.Metric:
         async with APIClient() as client:
-            metric_list = await client.get_metric_by_name_and_unit(
-                metric_creation_request.name, metric_creation_request.unit
+            metric_list = await client.get_metric_by_device_name_and_unit(
+                metric_creation_request.device_id, metric_creation_request.name, metric_creation_request.unit
             )
 
             if metric_list is None:

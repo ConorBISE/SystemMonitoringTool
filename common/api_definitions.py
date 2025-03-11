@@ -29,18 +29,6 @@ class Aggregator(AggregatorCreationRequest):
     uuid: UUID
 
 
-class MetricCreationRequest(BaseModel):
-    name: str
-    unit: str
-
-
-class Metric(MetricCreationRequest):
-    uuid: UUID
-
-
-class MetricQueryParams(Metric, OptionalModel): ...
-
-
 class DeviceCreationRequest(BaseModel):
     name: str
     aggregator_id: UUID
@@ -50,12 +38,24 @@ class Device(DeviceCreationRequest):
     uuid: UUID
 
 
-class DeviceQueryParams(Metric, OptionalModel): ...
+class DeviceQueryParams(Device, OptionalModel): ...
+
+
+class MetricCreationRequest(BaseModel):
+    name: str
+    unit: str
+    device_id: UUID
+
+
+class Metric(MetricCreationRequest):
+    uuid: UUID
+
+
+class MetricQueryParams(Metric, OptionalModel): ...
 
 
 class MetricReading(BaseModel):
     metric_id: UUID
-    device_id: UUID
     value: float
     timestamp: datetime.datetime
 

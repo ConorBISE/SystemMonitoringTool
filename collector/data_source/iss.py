@@ -108,10 +108,10 @@ class ISSStatisticsGatherer(DeviceMetricGatherer):
     async def init_metrics(self):
         self.METRICS_MAP = {
             "USLAB000059": await self.find_create_metric(
-                ad.MetricCreationRequest(name="Cabin Temperature", unit="°C")
+                ad.MetricCreationRequest(name="Cabin Temperature", unit="°C", device_id=(await self.device).uuid)
             ),
             "NODE3000009": await self.find_create_metric(
-                ad.MetricCreationRequest(name="Clean Water Tank", unit="%")
+                ad.MetricCreationRequest(name="Clean Water Tank", unit="%", device_id=(await self.device).uuid)
             ),
         }
 
@@ -123,7 +123,6 @@ class ISSStatisticsGatherer(DeviceMetricGatherer):
                 ad.MetricReading(
                     metric_id=self.METRICS_MAP[group].uuid,
                     value=value,
-                    timestamp=timestamp,
-                    device_id=(await self.device).uuid,
+                    timestamp=timestamp
                 )
             )

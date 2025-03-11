@@ -28,13 +28,14 @@ class SystemStatisticsGatherer(DeviceMetricGatherer):
 
     async def init_metrics(self):
         self.BATTERY_PERCENTAGE_METRIC = await self.find_create_metric(
-            ad.MetricCreationRequest(name="Battery Percentage", unit="%")
+            ad.MetricCreationRequest(
+                name="Battery Percentage", unit="%", device_id=(await self.device).uuid
+            )
         )
 
         self.CPU_USAGE_METRIC = await self.find_create_metric(
             ad.MetricCreationRequest(
-                name="CPU Usage",
-                unit="%",
+                name="CPU Usage", unit="%", device_id=(await self.device).uuid
             )
         )
 
@@ -49,7 +50,6 @@ class SystemStatisticsGatherer(DeviceMetricGatherer):
                 metric_id=self.CPU_USAGE_METRIC.uuid,
                 value=cpu,
                 timestamp=timestamp,
-                device_id=(await self.device).uuid,
             )
         ]
 
@@ -59,7 +59,6 @@ class SystemStatisticsGatherer(DeviceMetricGatherer):
                     metric_id=self.BATTERY_PERCENTAGE_METRIC.uuid,
                     value=battery,
                     timestamp=timestamp,
-                    device_id=(await self.device).uuid,
                 )
             )
         else:

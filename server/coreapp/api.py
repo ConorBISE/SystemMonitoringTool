@@ -94,7 +94,6 @@ def snapshot(request: HttpRequest, snapshot: ad.Snapshot):
         [
             models.Reading(
                 metric_id=reading.metric_id,
-                device_id=reading.device_id,
                 value=reading.value,
                 timestamp=reading.timestamp,
             )

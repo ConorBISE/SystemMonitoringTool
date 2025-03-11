@@ -75,29 +75,6 @@ class APIClient:
     post = functools.partial(request, "post")
     put = functools.partial(request, "put")
 
-    @get("/device?name={name}&aggregator_id={aggregator_id}")
-    async def get_device_by_name_and_aggregator(
-        self, name: str, aggregator_id: UUID
-    ) -> ad.ListResponse[ad.Device] | None: ...
-
-    @post("/device/")
-    async def create_device(
-        self, body: ad.DeviceCreationRequest
-    ) -> ad.Device | None: ...
-
-    @get("/metric/{uuid}")
-    async def get_metric(self, uuid: UUID) -> ad.Metric | None: ...
-
-    @get("/metric?name={name}&unit={unit}")
-    async def get_metric_by_name_and_unit(
-        self, name: str, unit: str
-    ) -> ad.ListResponse[ad.Metric] | None: ...
-
-    @post("/metric/")
-    async def create_metric(
-        self, body: ad.MetricCreationRequest
-    ) -> ad.Metric | None: ...
-
     @post("/aggregator/")
     async def create_aggregator(
         self, body: ad.AggregatorCreationRequest
@@ -107,6 +84,30 @@ class APIClient:
     async def update_aggregator(
         self, uuid: UUID, body: ad.Aggregator
     ) -> ad.Aggregator | None: ...
+
+
+    @post("/device/")
+    async def create_device(
+        self, body: ad.DeviceCreationRequest
+    ) -> ad.Device | None: ...
+
+    @get("/device?name={name}&aggregator_id={aggregator_id}")
+    async def get_device_by_name_and_aggregator(
+        self, name: str, aggregator_id: UUID
+    ) -> ad.ListResponse[ad.Device] | None: ...
+
+    @post("/metric/")
+    async def create_metric(
+        self, body: ad.MetricCreationRequest
+    ) -> ad.Metric | None: ...
+
+    @get("/metric/{uuid}")
+    async def get_metric(self, uuid: UUID) -> ad.Metric | None: ...
+
+    @get("/metric?device_id={device_id}&name={name}&unit={unit}")
+    async def get_metric_by_device_name_and_unit(
+        self, device_id: UUID, name: str, unit: str
+    ) -> ad.ListResponse[ad.Metric] | None: ...
 
     @post("/snapshot")
     async def create_snapshot(self, body: ad.Snapshot) -> ad.Snapshot | None: ...

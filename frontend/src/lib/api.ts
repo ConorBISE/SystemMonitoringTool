@@ -1,21 +1,29 @@
 import useSWR from "swr"
 import { TimeseriesBound } from "./util"
-const BASE_URL = "https://systemmonitortool.ddns.net/api"
+
+const BASE_URL = import.meta.env.VITE_API_URL
 
 export type Aggregator = {
     name: string
     uuid: string
 }
 
+
+export type Device = {
+    name: string
+    uuid: string
+    aggregator_id: string
+}
+
 export type Metric = {
     name: string
-    unit: string
     uuid: string
+    device_id: string
+    unit: string
 }
 
 export type MetricReading = {
     metric_id: string
-    device_id: string
     value: number
     timestamp: string
 }
@@ -53,6 +61,10 @@ export function useMetrics() {
 
 export function useAggregatorMetrics(uuid: string) {
     return useSWR<Metric[]>(`/metric?aggregator_id=${uuid}`, listItemFetcher);
+}
+
+export function useAggregatorDevices(uuid: string) {
+    return useSWR<Device[]>(`/device?aggregator_id=${uuid}`, listItemFetcher);
 }
 
 
