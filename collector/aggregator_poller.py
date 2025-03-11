@@ -5,13 +5,11 @@ from typing import List
 from aiohttp.web import HTTPException
 
 import common.api_definitions as ad
-from collector import config, server_api
+from collector.config import CONFIG
+import collector.server_api as server_api
 from collector.data_source.device_metric_gatherer import DeviceMetricGatherer
 
 logger = logging.getLogger(__name__)
-
-
-cfg = config.load_config()
 
 
 class AggregatorPoller:
@@ -61,12 +59,12 @@ class AggregatorPoller:
                             )
                             logger.exception(e)
 
-                            if consecutive_failures >= cfg.num_failures_for_backoff:
-                                backoff_time = interval * cfg.backoff_intervals
+                            if consecutive_failures >= CONFIG.num_failures_for_backoff:
+                                backoff_time = interval * CONFIG.backoff_intervals
                                 logger.error(
                                     "Reached %d consecutive failures - backing off for %d intervals (%d seconds).",
-                                    cfg.num_failures_for_backoff,
-                                    cfg.backoff_intervals,
+                                    CONFIG.num_failures_for_backoff,
+                                    CONFIG.backoff_intervals,
                                     backoff_time,
                                 )
 

@@ -7,10 +7,9 @@ from pydantic import ValidationError
 
 import common.api_definitions as ad
 
-from . import config
+from .config import CONFIG
 
 logger = logging.getLogger(__name__)
-cfg = config.load_config()
 
 
 class ControlChannelListener:
@@ -20,7 +19,7 @@ class ControlChannelListener:
         command_map: Dict[ad.ControlCommand, Callable[[ad.ControlMessage], None]],
     ):
         self.aggregator = aggregator
-        self.url = urllib.parse.urljoin(cfg.server_url, f"/ws/{aggregator.uuid}/")
+        self.url = urllib.parse.urljoin(CONFIG.server_url, f"/ws/{aggregator.uuid}/")
         self.command_map = command_map
 
     async def run(self):

@@ -8,11 +8,10 @@ from uuid import UUID
 
 import aiohttp
 
-from collector import config
+from collector.config import CONFIG
 from common import api_definitions as ad
 
 logger = logging.getLogger(__name__)
-cfg = config.load_config()
 
 
 class APIClient:
@@ -38,7 +37,7 @@ class APIClient:
                     **{arg_name: value for (arg_name, value) in zip(arg_names, args)}
                 )
 
-                full_url = urllib.parse.urljoin(cfg.server_url, formatted_url)
+                full_url = urllib.parse.urljoin(CONFIG.server_url, formatted_url)
 
                 body = None
                 if "body" in arg_names:

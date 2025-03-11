@@ -10,11 +10,10 @@ from collector.control_channel import ControlChannelListener
 from collector.data_source.device_metric_gatherer import DeviceMetricGatherer
 
 from . import config
+from .config import CONFIG
 
 logger = logging.getLogger(__name__)
 config.setup_logging()
-
-cfg = config.load_config()
 
 
 def lookup_gatherer(path: str) -> type[DeviceMetricGatherer]:
@@ -49,10 +48,10 @@ class App:
         async with server_api.APIClient() as client:
             app_data = config.read_app_data()
 
-            if app_data is None or app_data.aggregator.name != cfg.aggregator_name:
+            if app_data is None or app_data.aggregator.name != CONFIG.aggregator_name:
                 # This is our first run. We'll need to create an aggregator for the first time.
                 aggregator = await client.create_aggregator(
-                    ad.AggregatorCreationRequest(name=cfg.aggregator_name)
+                    ad.AggregatorCreationRequest(name=CONFIG.aggregator_name)
                 )
 
                 if aggregator is None:
@@ -67,7 +66,7 @@ class App:
     async def run(self):
         aggregator = await self.fetch_or_register_aggregator()
 
-        gatherer_classes = list(map(lookup_gatherer, cfg.device_gatherer_classes))
+        gatherer_classes = list(map(lookup_gatherer, CONFIG.device_gatherer_classes))
         agg_poller = AggregatorPoller(aggregator, gatherer_classes)
 
         await asyncio.gather(
