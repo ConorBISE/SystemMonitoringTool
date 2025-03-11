@@ -12,12 +12,19 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
+import { Route as AggregatorUuidImport } from './routes/aggregator.$uuid'
 
 // Create/Update Routes
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AggregatorUuidRoute = AggregatorUuidImport.update({
+  id: '/aggregator/$uuid',
+  path: '/aggregator/$uuid',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -32,6 +39,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/aggregator/$uuid': {
+      id: '/aggregator/$uuid'
+      path: '/aggregator/$uuid'
+      fullPath: '/aggregator/$uuid'
+      preLoaderRoute: typeof AggregatorUuidImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -39,32 +53,37 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/aggregator/$uuid': typeof AggregatorUuidRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/aggregator/$uuid': typeof AggregatorUuidRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/aggregator/$uuid': typeof AggregatorUuidRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/aggregator/$uuid'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/aggregator/$uuid'
+  id: '__root__' | '/' | '/aggregator/$uuid'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AggregatorUuidRoute: typeof AggregatorUuidRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AggregatorUuidRoute: AggregatorUuidRoute,
 }
 
 export const routeTree = rootRoute
@@ -77,11 +96,15 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/aggregator/$uuid"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/aggregator/$uuid": {
+      "filePath": "aggregator.$uuid.tsx"
     }
   }
 }

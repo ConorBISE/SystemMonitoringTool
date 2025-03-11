@@ -105,7 +105,7 @@ def snapshot(request: HttpRequest, snapshot: ad.Snapshot):
     return snapshot
 
 
-@api.post("/control/{aggregator_id}")
+@api.post("/aggregator/{aggregator_id}/control")
 async def control(
     request: HttpRequest, aggregator_id: UUID, control_message: ad.ControlMessage
 ):

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useMetricReadings, Metric, MetricReading } from "../lib/api";
+import { useState } from "react";
+import { useMetricReadings, Metric } from "../lib/api";
 import LineChart from "./LineChart";
 import { TimeseriesBound } from "../lib/util";
 import { useInterval } from "usehooks-ts";
