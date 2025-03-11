@@ -24,7 +24,6 @@ function AggregatorComponent() {
 
   const charts = metrics.map((metric, i) => (
     <div className="py-2" key={i}>
-      <h1>{metric.name}</h1>
       <MetricLineChart metric={metric} />
     </div>
   ));
