@@ -1,11 +1,11 @@
+import useSWR from "swr"
 import { TimeseriesBound } from "./util"
-
 const BASE_URL = "https://systemmonitortool.ddns.net/api"
 
 export type Metric = {
     name: string
     unit: string
-    uuid: string   
+    uuid: string
 }
 
 export type MetricReading = {
@@ -20,12 +20,16 @@ type ListResponse<T> = {
     count: number
 }
 
-export async function getMetrics() {
-    const res: ListResponse<Metric> = await (await fetch(`${BASE_URL}/metric`)).json()
-    return res.items
+async function fetcher<T>(url: string): Promise<T> {
+    return await (await fetch(BASE_URL + url)).json()
 }
 
-export async function getMetricReadings(metricId: string, timeseriesBound?: TimeseriesBound) {
+
+export function useMetrics() {
+    return useSWR<Metric[]>("/metric", async (key: string) => (await fetcher<ListResponse<Metric>>(key)).items);
+}
+
+export function useMetricReadings(metricId: string, timeseriesBound?: TimeseriesBound) {
     const query = new URLSearchParams()
     query.set("metric_id", metricId)
 
@@ -33,7 +37,6 @@ export async function getMetricReadings(metricId: string, timeseriesBound?: Time
         query.set("timestamp_min", timeseriesBound.min.toISOString())
         query.set("timestamp_max", timeseriesBound.max.toISOString())
     }
-        
-    const res: MetricReading[] = await (await fetch(`${BASE_URL}/metric_reading?${query.toString()}`)).json()
-    return res
+
+    return useSWR<MetricReading[]>(`/metric_reading/${metricId}`, async (_key: string) => await fetcher<MetricReading[]>(`/metric_reading?${query.toString()}`))
 }

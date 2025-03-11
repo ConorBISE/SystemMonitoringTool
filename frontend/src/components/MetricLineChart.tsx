@@ -1,23 +1,8 @@
 import { useEffect, useState } from "react";
-import { getMetricReadings, Metric, MetricReading } from "../lib/api";
+import { useMetricReadings, Metric, MetricReading } from "../lib/api";
 import LineChart from "./LineChart";
 import { TimeseriesBound } from "../lib/util";
 import { useInterval } from "usehooks-ts";
-
-function useMetricReadings(metricId: string, timeseriesBound: TimeseriesBound) {
-  const [readings, setReadings] = useState<MetricReading[]>([]);
-
-  useEffect(() => {
-    async function fetchData() {
-      const data = await getMetricReadings(metricId, timeseriesBound);
-      setReadings(data);
-    }
-
-    fetchData();
-  }, [metricId, timeseriesBound]);
-
-  return readings;
-}
 
 function lastHourInterval(): TimeseriesBound {
   return {
@@ -28,15 +13,17 @@ function lastHourInterval(): TimeseriesBound {
 
 export default function MetricLineChart({ metric }: { metric: Metric }) {
   const [userHasZoomedChart, setUserHasZoomedChart] = useState(false);
-
   const [timeseriesBound, setTimeseriesBound] = useState<TimeseriesBound>(lastHourInterval());
+
+  const { data: metricReadings, isLoading: metricReadingsLoading } = useMetricReadings(metric.uuid, timeseriesBound);
 
   useInterval(() => {
     if (!userHasZoomedChart)
       setTimeseriesBound(lastHourInterval())
   }, 1000 * 10)
 
-  const metricReadings = useMetricReadings(metric.uuid, timeseriesBound);
+  if (metricReadings === undefined)
+      return <>Loading ...</>
 
   const chartPoints = metricReadings.map((reading) => {
     return { x: new Date(reading.timestamp), y: reading.value };

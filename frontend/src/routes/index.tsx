@@ -1,9 +1,8 @@
 import * as React from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
-import { useState } from "react";
+
 import {
-  getMetrics,
+  useMetrics,
   Metric,
 } from "../lib/api";
 import MetricLineChart from "../components/MetricLineChart";
@@ -13,18 +12,9 @@ export const Route = createFileRoute("/")({
 });
 
 function HomeComponent() {
-  const [metrics, setMetrics] = useState<Metric[]>([]);
+  const { data: metrics, isLoading: metricsLoading } = useMetrics();
 
-  // TODO: *any* kind of fetching library to manage this
-  useEffect(() => {
-    async function inner() {
-      setMetrics(await getMetrics());
-    }
-
-    inner();
-  }, []);
-
-  if (metrics.length === 0) {
+  if (metricsLoading || metrics === undefined) {
     return <div>Loading ...</div>;
   }
 
