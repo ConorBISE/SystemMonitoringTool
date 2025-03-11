@@ -6,7 +6,7 @@ export function AggreagatorSummary({ aggregator }: { aggregator: Aggregator }) {
     const onIdentifyAggregator = async () => {
         await postCommand(aggregator.uuid, {
             command: "open_browser",
-            data: "https://google.com"
+            data: "https://systemmonitortool.ddns.net/"
         });
     };
 

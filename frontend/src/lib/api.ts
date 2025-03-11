@@ -69,7 +69,7 @@ export function useMetricReadings(metricId: string, timeseriesBound?: Timeseries
 }
 
 export async function postCommand(aggregatorId: string, command: Command): Promise<void> {
-    await fetch(`${BASE_URL}/aggregator/${aggregatorId}/command`, {
+    await fetch(`${BASE_URL}/aggregator/${aggregatorId}/control`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
