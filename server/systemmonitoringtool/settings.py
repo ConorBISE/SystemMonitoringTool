@@ -27,13 +27,9 @@ class Config(BaseModel):
 
 CONFIG = load_config(Config, __file__)
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-@s$f7(f@^pq7ia-eo+txs5ucqco_mu9adxzyc%b5fm*o&$1mo_"
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = CONFIG.debug
 
 ALLOWED_HOSTS = [CONFIG.host]
